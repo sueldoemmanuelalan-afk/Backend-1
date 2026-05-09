@@ -1,0 +1,197 @@
+<div class="container">
+  <h1>🛍️ Saga Store</h1>
+
+  <div id='productsContainer'>
+    {{#each products}}
+      <div class="product-card">
+        <h2>{{this.title}}</h2>
+        {{#if this.description}}
+          <p>{{this.description}}</p>
+        {{/if}}
+        {{#if this.category}}
+          <p><strong>Categoría:</strong> {{this.category}}</p>
+        {{/if}}
+        <div class="price">${{this.price}}</div>
+        {{#if this.stock}}
+          <p class="stock">Stock: {{this.stock}} unidades</p>
+        {{else}}
+          <p class="stock">Sin stock</p>
+        {{/if}}
+        {{#if this.code}}
+          <p><strong>Código:</strong> {{this.code}}</p>
+        {{/if}}
+        <span class="status {{#if this.status}}active{{else}}inactive{{/if}}">{{#if this.status}}Disponible{{else}}No disponible{{/if}}</span>
+        <div class="button-group">
+          <a href="/products/{{this._id}}" class="btn">Ver detalles</a>
+          {{#if this.stock}}
+            <form action="/api/carts/{{../cartId}}/products/{{this._id}}" method="POST" style="display: inline-block;">
+              <button type="submit" class="btn">Agregar al carrito</button>
+            </form>
+          {{else}}
+            <button class="btn" disabled>Sin stock</button>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="pagination">
+    {{#if hasPrevPage}}
+      <a href='/products?page={{prevPage}}'>⬅ Anterior</a>
+    {{/if}}
+
+    {{#if hasNextPage}}
+      <a href='/products?page={{nextPage}}'>Siguiente ➡</a>
+    {{/if}}
+  </div>
+</div>
+
+<script src='/socket.io/socket.io.js'></script>
+{{!-- <script>
+  const socket = io();
+  socket.on('updateProducts', (products) => {
+    const container = document.getElementById('productsContainer');
+    container.innerHTML = '';
+    products.forEach(p => {
+      const status = p.status ? 'Disponible' : 'No disponible';
+      const statusClass = p.status ? 'active' : 'inactive';
+      const categoryHtml = p.category ? `<p><strong>Categoría:</strong> ${p.category}</p>` : '';
+      const codeHtml = p.code ? `<p><strong>Código:</strong> ${p.code}</p>` : '';
+      const description = p.description ? `<p>${p.description}</p>` : '';
+      const stock = p.stock ? `<p class="stock">Stock: ${p.stock} unidades</p>` : `<p class="stock">Sin stock</p>`;
+      container.innerHTML += `
+        <div class="product-card">
+          <h2>${p.title}</h2>
+          ${description}
+          ${categoryHtml}
+          <div class="price">$${p.price}</div>
+          ${stock}
+          ${codeHtml}
+          <span class="status ${statusClass}">${status}</span>
+          <div style="margin-top: 15px;">
+            <a href="/products/${p._id}" class="btn">Ver detalles</a>
+          </div>
+        </div>
+      `;
+    });
+  });
+</script> --}}
+{{!-- <script>
+const socket = io();
+const cartId = '{{cartId}}'; // Obtener cartId del servidor
+
+socket.on('updateProducts', (products) => {
+  const container = document.getElementById('productsContainer');
+
+  let html = '';
+
+  products.forEach(p => {
+    const categoryHtml = p.category ? `<p><strong>Categoría:</strong> ${p.category}</p>` : '';
+    const codeHtml = p.code ? `<p><strong>Código:</strong> ${p.code}</p>` : '';
+    const description = p.description ? `<p>${p.description}</p>` : '';
+    const stock = p.stock > 0
+      ? `<p class="stock">Stock: ${p.stock} unidades</p>`
+      : `<p class="stock">Sin stock</p>`;
+    const statusClass = p.stock > 0 ? 'active' : 'inactive';
+    const statusText = p.stock > 0 ? 'Disponible' : 'Sin stock';
+
+    let buttonsHtml = `
+      <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/products/${p._id}" class="btn">Ver detalles</a>`;
+
+    if (p.stock > 0) {
+      buttonsHtml += `
+        <form action="/api/carts/${cartId}/products/${p._id}" method="POST" style="display: inline-block;">
+          <button type="submit" class="btn">Agregar al carrito</button>
+        </form>`;
+    } else {
+      buttonsHtml += `<button class="btn" disabled>Sin stock</button>`;
+    }
+
+    buttonsHtml += `</div>`;
+
+    html += `
+      <div class="product-card">
+        <h2>${p.title}</h2>
+        ${description}
+        ${categoryHtml}
+        <div class="price">$${p.price}</div>
+        ${stock}
+        ${codeHtml}
+        <span class="status ${statusClass}">${statusText}</span>
+        ${buttonsHtml}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+});
+</script> --}}
+{{!-- <script>
+const socket = io();
+const cartId = '{{cartId}}'; // Obtener cartId del servidor
+
+socket.on('updateProducts', (products) => {
+  console.log('Productos recibidos por Socket.IO:', products);
+  const container = document.getElementById('productsContainer');
+
+  let html = '';
+
+  products.forEach(p => {
+    const categoryHtml = p.category ? `<p><strong>Categoría:</strong> ${p.category}</p>` : '';
+    const codeHtml = p.code ? `<p><strong>Código:</strong> ${p.code}</p>` : '';
+    const description = p.description ? `<p>${p.description}</p>` : '';
+    const stock = p.stock > 0
+      ? `<p class="stock">Stock: ${p.stock} unidades</p>`
+      : `<p class="stock">Sin stock</p>`;
+    const statusClass = p.stock > 0 ? 'active' : 'inactive';
+    const statusText = p.stock > 0 ? 'Disponible' : 'Sin stock';
+
+    let buttonsHtml = `
+      <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/products/${p._id}" class="btn">Ver detalles</a>`;
+
+    if (p.stock > 0) {
+      buttonsHtml += `
+        <form action="/api/carts/${cartId}/products/${p._id}" method="POST" style="display: inline-block;">
+          <button type="submit" class="btn">Agregar al carrito</button>
+        </form>`;
+    } else {
+      buttonsHtml += `<button class="btn" disabled>Sin stock</button>`;
+    }
+
+    buttonsHtml += `</div>`;
+
+    html += `
+      <div class="product-card">
+        <h2>${p.title}</h2>
+        ${description}
+        ${categoryHtml}
+        <div class="price">$${p.price}</div>
+        ${stock}
+        ${codeHtml}
+        <span class="status ${statusClass}">${statusText}</span>
+        ${buttonsHtml}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+});
+</script> --}}
+{{!-- <script>
+const socket = io();
+const cartId = '{{cartId}}'; // Obtener cartId del servidor
+
+socket.on('updateProducts', (products) => {
+  // Solo actualizar si hay cambios reales, no inmediatamente al conectar
+  console.log('Socket.IO recibió productos, pero no actualiza automáticamente');
+});
+</script> --}}
+<script src='/socket.io/socket.io.js'></script>
+<script>
+  const socket = io();
+  socket.on('connect', () => {
+    console.log('Cliente conectado al servidor Socket.IO');
+  });
+</script>

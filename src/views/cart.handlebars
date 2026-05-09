@@ -1,0 +1,100 @@
+<div class="container">
+  <h1>🛒 Tu Carrito</h1>
+
+  {{#if cart.products.length}}
+    <div class="cart-items">
+      {{#each cart.products}}
+        <div class="cart-item">
+          <div class="item-info">
+            <h2>{{this.product.title}}</h2>
+            <p class="item-price">${{this.product.price}}</p>
+          </div>
+          <div class="item-actions">
+            <div>
+              <label>Cantidad:</label>
+              <input type="number" class="quantity-input" value="{{this.quantity}}" min="1" data-pid="{{this.product._id}}" data-cid="{{../cart._id}}">
+            </div>
+            <button class="btn btn-delete" onclick="deleteProduct('{{../cart._id}}', '{{this.product._id}}', event)">Eliminar</button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="cart-summary">
+      <div class="total">Total: $<span id="total">0</span></div>
+      <div class="cart-actions">
+        <a href="/products" class="btn btn-secondary">← Continuar comprando</a>
+        <button class="btn btn-delete" onclick="clearCart('{{cart._id}}', event)">Vaciar carrito</button>
+      </div>
+    </div>
+  {{else}}
+    <div class="cart-empty">
+      <h2>Tu carrito está vacío</h2>
+      <p>¡Vuelve a nuestros productos y agrega algo!</p>
+      <a href="/products" class="btn btn-secondary" style="display: inline-block; margin-top: 20px;">← Ir a productos</a>
+    </div>
+  {{/if}}
+</div>
+
+<script>
+  function deleteProduct(cid, pid, event) {
+    event.preventDefault();
+    if (confirm('¿Deseas eliminar este producto del carrito?')) {
+      fetch(`/api/carts/${cid}/products/${pid}`, {
+        method: 'DELETE'
+      }).then(() => {
+        location.reload();
+      }).catch(err => console.error('Error:', err));
+    }
+  }
+
+  function clearCart(cid, event) {
+    event.preventDefault();
+    if (confirm('¿Deseas vaciar todo el carrito?')) {
+      fetch(`/api/carts/${cid}`, {
+        method: 'DELETE'
+      }).then(() => {
+        location.reload();
+      }).catch(err => console.error('Error:', err));
+    }
+  }
+
+  function calculateTotal() {
+    let total = 0;
+    const items = document.querySelectorAll('.cart-item');
+    items.forEach(item => {
+      const price = parseFloat(item.querySelector('.item-price').textContent.replace('$', ''));
+      const quantity = parseInt(item.querySelector('.quantity-input').value);
+      total += price * quantity;
+    });
+    document.getElementById('total').textContent = total.toFixed(2);
+  }
+
+  document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('change', async (e) => {
+      const quantity = parseInt(e.target.value);
+      if (quantity < 1) {
+        alert('La cantidad debe ser mayor a 0');
+        e.target.value = 1;
+        return;
+      }
+      const cid = e.target.dataset.cid;
+      const pid = e.target.dataset.pid;
+      
+      try {
+        const response = await fetch(`/api/carts/${cid}/products/${pid}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity })
+        });
+        if (response.ok) {
+          calculateTotal();
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+  });
+
+  calculateTotal();
+</script>

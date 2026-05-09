@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="detail-card">
+    <h1>{{product.title}}</h1>
+    
+    {{#if product.description}}
+      <div class="info">
+        <strong>Descripción:</strong>
+        <p>{{product.description}}</p>
+      </div>
+    {{/if}}
+
+    <div class="price">${{product.price}}</div>
+
+    {{#if product.category}}
+      <div class="info">
+        <strong>Categoría:</strong> {{product.category}}
+      </div>
+    {{/if}}
+
+    {{#if product.code}}
+      <div class="info">
+        <strong>Código:</strong> {{product.code}}
+      </div>
+    {{/if}}
+
+    <div class="stock">
+      {{#if product.stock}}
+        Stock disponible: {{product.stock}} unidades
+      {{else}}
+        Sin stock disponible
+      {{/if}}
+    </div>
+
+    <span class="status {{#if product.status}}active{{else}}inactive{{/if}}">
+      {{#if product.status}}✓ Disponible{{else}}✗ No disponible{{/if}}
+    </span>
+
+    <div class="buttons">
+      {{#if product.stock}}
+        <form id="addToCartForm" action='/api/carts/{{cartId}}/products/{{product._id}}' method='POST'>
+          <button type='submit' class='btn btn-primary'>🛒 Agregar al carrito</button>
+        </form>
+      {{else}}
+        <button disabled class='btn'>Sin stock</button>
+      {{/if}}
+      <a href='/products' class='btn btn-secondary'>← Volver</a>
+    </div>
+  </div>
+</div>
