@@ -2,13 +2,13 @@ import mongoose from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 
 const productSchema = new mongoose.Schema({
-  title: String,
+  title: { type: String, required: true },
   description: String,
-  code: String,
-  price: Number,
+  code: { type: String, required: true, unique: true },
+  price: { type: Number, required: true },
   status: { type: Boolean, default: true },
-  stock: Number,
-  category: String,
+  stock: { type: Number, default: 0 },
+  category: { type: String, required: true },
   thumbnails: [String],
 });
 
