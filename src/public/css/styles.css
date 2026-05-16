@@ -48,8 +48,8 @@ h1 {
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
 }
 
 .product-card h2 {
@@ -368,4 +368,40 @@ h1 {
 
 .detail-card .buttons button {
   width: 100%;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+  background-color: #1b60f5;
+  padding: 12px 20px;
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #1b60f5;
+  color: white;
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
 }

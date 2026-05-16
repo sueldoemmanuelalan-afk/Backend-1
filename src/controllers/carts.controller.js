@@ -31,7 +31,11 @@ export const addProduct = async (req, res) => {
     // Intentar agregar el producto
     const updated = await dao.addProduct(cid, pid);
     console.log('[addProduct] Producto agregado exitosamente');
-    res.redirect(`/carts/${cid}`);
+    // res.redirect(`/carts/${cid}`);
+    res.json({
+      status: 'success',
+      message: 'Producto agregado al carrito'
+   });
   } catch (error) {
     console.error('[addProduct] Error:', error.message);
 
